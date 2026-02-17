@@ -5,7 +5,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import os
 
 TOKEN = ("8158005825:AAFKlFXvqdVQUfkA6NVtmNTMGC4rSGIc778")  # Railway uchun
-ADMIN_ID = 8332077004  # admin id
+ADMIN_ID = 8537782289  # admin id
 CHANNEL = "@Azizbekl2026"  # kanal username
 
 bot = Bot(token=TOKEN)
