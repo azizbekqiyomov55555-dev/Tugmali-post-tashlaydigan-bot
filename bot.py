@@ -2,11 +2,7 @@ import asyncio
 from datetime import datetime
 
 from aiogram import Bot, Dispatcher, F
-from aiogram.types import (
-    Message,
-    InlineKeyboardMarkup,
-    InlineKeyboardButton
-)
+from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
@@ -17,7 +13,7 @@ from aiogram.fsm.context import FSMContext
 
 TOKEN = "8312975127:AAFIXWrANgTpX_9ldK16OP97Tky3iRJqzL4"
 CHANNEL = "@Azizbekl2026"
-ADMIN_ID = 8312975127
+ADMIN_ID = 8537782289
 
 bot = Bot(
     token=TOKEN,
@@ -51,7 +47,7 @@ async def start(message: Message):
         kb = InlineKeyboardMarkup(inline_keyboard=[
             [InlineKeyboardButton(
                 text="📢 Kanalga kirish",
-                url=f"https://t.me/{CHANNEL[1:]}"
+                url="https://t.me/Azizbekl2026"
             )]
         ])
 
@@ -64,30 +60,30 @@ async def start(message: Message):
     if message.from_user.id == ADMIN_ID:
         await message.answer(
             "👑 Admin panel\n\n"
-            "Post yuboring (text yoki rasm + text)"
+            "Post yuboring (matn yoki rasm + matn)"
         )
     else:
         await message.answer("✅ Bot ishlayapti")
 
 # ================= ADMIN POST START =================
 
-@dp.message(F.from_user.id == ADMIN_ID)
+@dp.message(F.from_user.id == ADMIN_ID, StateFilter(None))
 async def admin_post(message: Message, state: FSMContext):
 
     if message.text and message.text.startswith("/"):
         return
 
     await state.update_data(
-        text=message.caption or message.text,
+        text=message.caption or message.text or "",
         photo=message.photo[-1].file_id if message.photo else None
     )
 
     await message.answer("🔘 Tugma nomini yuboring:")
     await state.set_state(PostState.waiting_button)
 
-# ================= BUTTON NAME =================
+# ================= BUTTON =================
 
-@dp.message(PostState.waiting_button)
+@dp.message(PostState.waiting_button, F.from_user.id == ADMIN_ID)
 async def get_button(message: Message, state: FSMContext):
 
     await state.update_data(button=message.text)
@@ -97,7 +93,7 @@ async def get_button(message: Message, state: FSMContext):
 
 # ================= LINK =================
 
-@dp.message(PostState.waiting_link)
+@dp.message(PostState.waiting_link, F.from_user.id == ADMIN_ID)
 async def get_link(message: Message, state: FSMContext):
 
     await state.update_data(link=message.text)
@@ -112,7 +108,7 @@ async def get_link(message: Message, state: FSMContext):
 
 # ================= TIME + SCHEDULE =================
 
-@dp.message(PostState.waiting_time)
+@dp.message(PostState.waiting_time, F.from_user.id == ADMIN_ID)
 async def schedule_post(message: Message, state: FSMContext):
 
     data = await state.get_data()
@@ -130,25 +126,15 @@ async def schedule_post(message: Message, state: FSMContext):
         return
 
     kb = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(
-            text=data["button"],
-            url=data["link"]
-        )]
+        [InlineKeyboardButton(text=data["button"], url=data["link"])]
     ])
 
     await message.answer("👀 Preview:")
 
     if data["photo"]:
-        await message.answer_photo(
-            data["photo"],
-            caption=data["text"],
-            reply_markup=kb
-        )
+        await message.answer_photo(data["photo"], caption=data["text"], reply_markup=kb)
     else:
-        await message.answer(
-            data["text"],
-            reply_markup=kb
-        )
+        await message.answer(data["text"], reply_markup=kb)
 
     await message.answer(f"✅ Post {message.text} da yuboriladi!")
 
@@ -156,18 +142,9 @@ async def schedule_post(message: Message, state: FSMContext):
         await asyncio.sleep(delay)
 
         if data["photo"]:
-            await bot.send_photo(
-                CHANNEL,
-                data["photo"],
-                caption=data["text"],
-                reply_markup=kb
-            )
+            await bot.send_photo(CHANNEL, data["photo"], caption=data["text"], reply_markup=kb)
         else:
-            await bot.send_message(
-                CHANNEL,
-                data["text"],
-                reply_markup=kb
-            )
+            await bot.send_message(CHANNEL, data["text"], reply_markup=kb)
 
     asyncio.create_task(send_later())
 
@@ -176,7 +153,7 @@ async def schedule_post(message: Message, state: FSMContext):
 # ================= RUN =================
 
 async def main():
-    print("🤖 Super bot ishga tushdi!")
+    print("🤖 Bot ishga tushdi!")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
