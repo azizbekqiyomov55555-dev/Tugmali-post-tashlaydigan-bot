@@ -1,12 +1,23 @@
 import asyncio
+from datetime import datetime
+
 from aiogram import Bot, Dispatcher, F
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import (
+    Message,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton
+)
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.context import FSMContext
+
+# ================= CONFIG =================
+
 TOKEN = "8312975127:AAFIXWrANgTpX_9ldK16OP97Tky3iRJqzL4"
 CHANNEL = "@Azizbekl2026"
-ADMIN_ID = 8537782289  # admin id
+ADMIN_ID = 8312975127
 
 bot = Bot(
     token=TOKEN,
@@ -15,6 +26,12 @@ bot = Bot(
 
 dp = Dispatcher()
 
+# ================= STATE =================
+
+class PostState(StatesGroup):
+    waiting_button = State()
+    waiting_link = State()
+    waiting_time = State()
 
 # ================= SUB CHECK =================
 
@@ -25,7 +42,6 @@ async def check_sub(user_id):
     except:
         return False
 
-
 # ================= START =================
 
 @dp.message(F.text == "/start")
@@ -33,7 +49,10 @@ async def start(message: Message):
 
     if not await check_sub(message.from_user.id):
         kb = InlineKeyboardMarkup(inline_keyboard=[
-            [InlineKeyboardButton(text="📢 Kanalga kirish", url=f"https://t.me/{CHANNEL[1:]}")]
+            [InlineKeyboardButton(
+                text="📢 Kanalga kirish",
+                url=f"https://t.me/{CHANNEL[1:]}"
+            )]
         ])
 
         await message.answer(
@@ -45,88 +64,120 @@ async def start(message: Message):
     if message.from_user.id == ADMIN_ID:
         await message.answer(
             "👑 Admin panel\n\n"
-            "Post yuborish uchun:\n"
-            "Matn + tugma yuboring\n\n"
-            "Format:\n"
-            "Text\n\nButton | link"
+            "Post yuboring (text yoki rasm + text)"
         )
     else:
         await message.answer("✅ Bot ishlayapti")
 
-
-# ================= ADMIN POST =================
-
-def parse_buttons(text):
-
-    lines = text.split("\n")
-    buttons = []
-
-    clean_text = []
-
-    for line in lines:
-        if "|" in line:
-            t, u = line.split("|", 1)
-            buttons.append([InlineKeyboardButton(
-                text=t.strip(),
-                url=u.strip()
-            )])
-        else:
-            clean_text.append(line)
-
-    kb = InlineKeyboardMarkup(inline_keyboard=buttons) if buttons else None
-
-    return "\n".join(clean_text), kb
-
+# ================= ADMIN POST START =================
 
 @dp.message(F.from_user.id == ADMIN_ID)
-async def admin_post(message: Message):
+async def admin_post(message: Message, state: FSMContext):
 
     if message.text and message.text.startswith("/"):
         return
 
-    text = message.caption or message.text or ""
+    await state.update_data(
+        text=message.caption or message.text,
+        photo=message.photo[-1].file_id if message.photo else None
+    )
 
-    clean_text, kb = parse_buttons(text)
+    await message.answer("🔘 Tugma nomini yuboring:")
+    await state.set_state(PostState.waiting_button)
 
-    # preview
+# ================= BUTTON NAME =================
+
+@dp.message(PostState.waiting_button)
+async def get_button(message: Message, state: FSMContext):
+
+    await state.update_data(button=message.text)
+
+    await message.answer("🔗 Tugma linkini yuboring:")
+    await state.set_state(PostState.waiting_link)
+
+# ================= LINK =================
+
+@dp.message(PostState.waiting_link)
+async def get_link(message: Message, state: FSMContext):
+
+    await state.update_data(link=message.text)
+
+    await message.answer(
+        "⏰ Post vaqtini yuboring\n\n"
+        "Format:\nYYYY-MM-DD HH:MM\n\n"
+        "Misol:\n2026-02-18 21:30"
+    )
+
+    await state.set_state(PostState.waiting_time)
+
+# ================= TIME + SCHEDULE =================
+
+@dp.message(PostState.waiting_time)
+async def schedule_post(message: Message, state: FSMContext):
+
+    data = await state.get_data()
+
+    try:
+        post_time = datetime.strptime(message.text, "%Y-%m-%d %H:%M")
+    except:
+        await message.answer("❌ Vaqt formati noto‘g‘ri!")
+        return
+
+    delay = (post_time - datetime.now()).total_seconds()
+
+    if delay <= 0:
+        await message.answer("❌ Vaqt kelajakda bo‘lishi kerak!")
+        return
+
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(
+            text=data["button"],
+            url=data["link"]
+        )]
+    ])
+
     await message.answer("👀 Preview:")
 
-    if message.photo:
+    if data["photo"]:
         await message.answer_photo(
-            photo=message.photo[-1].file_id,
-            caption=clean_text,
+            data["photo"],
+            caption=data["text"],
             reply_markup=kb
         )
     else:
         await message.answer(
-            clean_text,
+            data["text"],
             reply_markup=kb
         )
 
-    # send to channel
-    if message.photo:
-        await bot.send_photo(
-            CHANNEL,
-            photo=message.photo[-1].file_id,
-            caption=clean_text,
-            reply_markup=kb
-        )
-    else:
-        await bot.send_message(
-            CHANNEL,
-            clean_text,
-            reply_markup=kb
-        )
+    await message.answer(f"✅ Post {message.text} da yuboriladi!")
 
-    await message.answer("✅ Kanalga joylandi!")
+    async def send_later():
+        await asyncio.sleep(delay)
 
+        if data["photo"]:
+            await bot.send_photo(
+                CHANNEL,
+                data["photo"],
+                caption=data["text"],
+                reply_markup=kb
+            )
+        else:
+            await bot.send_message(
+                CHANNEL,
+                data["text"],
+                reply_markup=kb
+            )
+
+    asyncio.create_task(send_later())
+
+    await state.clear()
 
 # ================= RUN =================
 
 async def main():
     print("🤖 Super bot ishga tushdi!")
     await dp.start_polling(bot)
-
 
 if __name__ == "__main__":
     asyncio.run(main())
