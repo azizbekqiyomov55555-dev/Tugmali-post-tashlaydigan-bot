@@ -1,50 +1,52 @@
 import asyncio
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import os
+from aiogram import Bot, Dispatcher, F
+from aiogram.types import Message
+from aiogram.enums import ParseMode
 
-TOKEN = ("8158005825:AAFKlFXvqdVQUfkA6NVtmNTMGC4rSGIc778")  # Railway uchun
-ADMIN_ID = 8537782289  # admin id
-CHANNEL = "@Azizbekl2026"  # kanal username
+TOKEN = "8158005825:AAFKlFXvqdVQUfkA6NVtmNTMGC4rSGIc778"
+CHANNEL_ID = "@Azizbekl2026"
 
-bot = Bot(token=TOKEN)
+bot = Bot(token=TOKEN, parse_mode=ParseMode.HTML)
 dp = Dispatcher()
 
+# START
+@dp.message(F.text == "/start")
+async def start_handler(message: Message):
+    await message.answer(
+        "📤 Kanalga post yuborish uchun:\n\n"
+        "👉 Rasm + matn yuboring"
+    )
 
-# ====== POST COMMAND ======
-@dp.message(Command("post"))
-async def send_post(message: types.Message):
-    if message.from_user.id != ADMIN_ID:
+# PHOTO POST
+@dp.message(F.photo)
+async def post_photo(message: Message):
+    caption = message.caption or ""
+
+    await bot.send_photo(
+        chat_id=CHANNEL_ID,
+        photo=message.photo[-1].file_id,
+        caption=caption
+    )
+
+    await message.answer("✅ Kanalga joylandi!")
+
+# TEXT POST
+@dp.message(F.text)
+async def post_text(message: Message):
+    if message.text.startswith("/"):
         return
 
-    bot_username = (await bot.me()).username
-
-    keyboard = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(
-                    text="🤖 Botga kiring",
-                    url=f"https://t.me/{bot_username}"
-                )
-            ]
-        ]
-    )
-
     await bot.send_message(
-        chat_id=CHANNEL,
-        text="🚀 Botdan foydalanish uchun pastdagi tugmani bosing:",
-        reply_markup=keyboard
+        chat_id=CHANNEL_ID,
+        text=message.text
     )
 
-    await message.answer("✅ Post kanalga yuborildi!")
+    await message.answer("✅ Kanalga joylandi!")
 
-
-# ====== START ======
+# RUN
 async def main():
-    print("✅ Bot ishga tushdi...")
+    print("🤖 Bot ishga tushdi...")
     await dp.start_polling(bot)
-
 
 if __name__ == "__main__":
     asyncio.run(main())
