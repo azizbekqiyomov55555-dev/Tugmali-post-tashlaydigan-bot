@@ -2,6 +2,7 @@ import asyncio
 from datetime import datetime
 
 from aiogram import Bot, Dispatcher, F
+from aiogram.filters import StateFilter
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
@@ -132,9 +133,16 @@ async def schedule_post(message: Message, state: FSMContext):
     await message.answer("👀 Preview:")
 
     if data["photo"]:
-        await message.answer_photo(data["photo"], caption=data["text"], reply_markup=kb)
+        await message.answer_photo(
+            data["photo"],
+            caption=data["text"],
+            reply_markup=kb
+        )
     else:
-        await message.answer(data["text"], reply_markup=kb)
+        await message.answer(
+            data["text"],
+            reply_markup=kb
+        )
 
     await message.answer(f"✅ Post {message.text} da yuboriladi!")
 
@@ -142,9 +150,18 @@ async def schedule_post(message: Message, state: FSMContext):
         await asyncio.sleep(delay)
 
         if data["photo"]:
-            await bot.send_photo(CHANNEL, data["photo"], caption=data["text"], reply_markup=kb)
+            await bot.send_photo(
+                CHANNEL,
+                data["photo"],
+                caption=data["text"],
+                reply_markup=kb
+            )
         else:
-            await bot.send_message(CHANNEL, data["text"], reply_markup=kb)
+            await bot.send_message(
+                CHANNEL,
+                data["text"],
+                reply_markup=kb
+            )
 
     asyncio.create_task(send_later())
 
