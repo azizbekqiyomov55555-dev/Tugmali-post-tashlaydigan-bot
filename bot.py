@@ -1,7 +1,6 @@
-import logging, os
-from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
+import logging, os, httpx
+from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
-from telegram import WebAppInfo
 
 BOT_TOKEN  = os.getenv("BOT_TOKEN",  "8620251558:AAFtCwV29iHcTR5TfeWmBNCAWSjPl2ZcK6c")
 WEBAPP_URL = os.getenv("WEBAPP_URL", "https://azizbekqiyomov55555-dev.github.io/Tugmali-post-tashlaydigan-bot/webapp.html")
@@ -9,21 +8,26 @@ WEBAPP_URL = os.getenv("WEBAPP_URL", "https://azizbekqiyomov55555-dev.github.io/
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
-def post_kb():
-    # Tugmaga "primary" (ko'k) rang berish
-    return InlineKeyboardMarkup([[InlineKeyboardButton(
-            "📝       Post yaratish       📝", 
-            web_app=WebAppInfo(url=WEBAPP_URL),
-            api_kwargs={"style": "primary"}
-        )]
-    ])
-
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "👋 <b>Xush kelibsiz!</b>\n\n📢 Kanalga post yuborish uchun tugmani bosing:",
-        parse_mode="HTML",
-        reply_markup=post_kb()
-    )
+    chat_id = update.message.chat_id
+    
+    # Telegram API'ga to'g'ridan-to'g'ri murojaat (Tugma 100% ko'k bo'lishi uchun)
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": "👋 <b>Xush kelibsiz!</b>\n\n📢 Kanalga post yuborish uchun pastdagi tugmani bosing:",
+        "parse_mode": "HTML",
+        "reply_markup": {
+            "inline_keyboard": [[{
+                "text": "📝       Post yaratish       📝",
+                "web_app": {"url": WEBAPP_URL},
+                "style": "primary" # BOT TUGMASI KO'K RANGDA BO'LADI
+            }]]
+        }
+    }
+    
+    async with httpx.AsyncClient() as client:
+        await client.post(url, json=payload)
 
 def main():
     app = Application.builder().token(BOT_TOKEN).build()
