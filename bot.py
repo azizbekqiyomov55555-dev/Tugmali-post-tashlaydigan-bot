@@ -122,13 +122,13 @@ def preview_text(ud):
     rang_emoji = COLORS.get(ud["rang"], "🟢")
     rang_nomi  = COLOR_NAMES.get(ud["rang"], "Yashil")
     return (
-        f"📋 <b>Post ko'rinishi:</b>\n\n"
+        "📋 <b>Post korinishi:</b>\n\n"
         f"📝 Matn: {ud['matn'] or '—'}\n"
-        f"🖼 Rasm: {'✅ bor' if ud['rasm'] else '❌ yo'q'}\n"
+        f"🖼 Rasm: {('✅ bor' if ud['rasm'] else '❌ yoq')}\n"
         f"🔗 Havola: {ud['havola'] or '—'}\n"
         f"🔘 Tugma nomi: {ud['tugma_nomi'] or '—'}\n"
         f"🎨 Rang: {rang_emoji} {rang_nomi}\n\n"
-        f"Yuborishni tasdiqlaysizmi?"
+        "Yuborishni tasdiqlaysizmi?"
     )
 
 # ─── /start ───────────────────────────────────
