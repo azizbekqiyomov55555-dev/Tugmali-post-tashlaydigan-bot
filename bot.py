@@ -22,7 +22,7 @@ BOT_TOKEN  = os.getenv("BOT_TOKEN",  "8620251558:AAFtCwV29iHcTR5TfeWmBNCAWSjPl2Z
 CHANNEL_ID = os.getenv("CHANNEL_ID", "@Azizbekl2026")
 
 # webapp.html ni hosting qilingan URL — Railway yoki GitHub Pages
-WEBAPP_URL = os.getenv("WEBAPP_URL", "https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPO/webapp.html")
+WEBAPP_URL = os.getenv("https://azizbekqiyomov55555-dev.github.io/Tugmali-post-tashlaydigan-bot/", "https://YOUR_GITHUB_USERNAME.github.io/YOUR_REPO/webapp.html")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
