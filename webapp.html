@@ -61,7 +61,7 @@ textarea:focus, input:focus { border-color:#1E88E5; }
 .color-btn[data-rang="qizil"]  { background:#e53935; }
 .color-btn[data-rang="kok"]    { background:#1E88E5; }
 .preview-box { background:#f0f0f0; border-radius:14px; padding:14px; margin-bottom:14px; font-size:14px; line-height:1.7; }
-.preview-btn { display:block; padding:12px 20px; border-radius:12px; color:#fff; font-weight:700; font-size:16px; text-align:center; text-decoration: none;}
+.preview-btn { display:block; padding:12px 20px; border-radius:12px; color:#fff; font-weight:700; font-size:16px; text-align:center; text-decoration: none; box-sizing: border-box;}
 .preview-media { width:100%; border-radius:10px; margin:8px 0; max-height:180px; object-fit:cover; }
 .sending-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center; flex-direction:column; }
 .sending-overlay.show { display:flex; }
@@ -125,11 +125,21 @@ textarea:focus, input:focus { border-color:#1E88E5; }
   <h2>🔗 Tugmalar</h2>
   
   <div class="media-types">
-    <div class="media-type-btn selected" data-count="0" onclick="selectBtnCount(0)">0️⃣<br><small>Yo'q</small></div>
-    <div class="media-type-btn" data-count="1" onclick="selectBtnCount(1)">1️⃣<br><small>1 ta tugma</small></div>
-    <div class="media-type-btn" data-count="2" onclick="selectBtnCount(2)">2️⃣<br><small>2 ta tugma</small></div>
+    <div class="media-type-btn selected" id="bc0" data-count="0" onclick="selectBtnCount(0)">0️⃣<br><small>Yo'q</small></div>
+    <div class="media-type-btn" id="bc1" data-count="1" onclick="selectBtnCount(1)">1️⃣<br><small>1 ta tugma</small></div>
+    <div class="media-type-btn" id="bc2" data-count="2" onclick="selectBtnCount(2)">2️⃣<br><small>2 ta tugma</small></div>
   </div>
 
+  <!-- YONMA-YON YOKI TAGMA-TAG TANLASH (Faqat 2 ta tugma uchun) -->
+  <div id="btnLayoutBox" style="display:none; margin-top:15px; background:#e3f2fd; padding:12px; border-radius:12px; border:1.5px solid #1E88E5;">
+    <label style="color:#1565C0;">Tugmalar qanday joylashsin?</label>
+    <div class="media-types">
+      <div class="media-type-btn selected" id="layout1" onclick="selectLayout('stacked')" style="border-color:#1E88E5;">↕️<br><small>Tagma-tag</small></div>
+      <div class="media-type-btn" id="layout2" onclick="selectLayout('inline')">↔️<br><small>Yonma-yon</small></div>
+    </div>
+  </div>
+
+  <!-- 1-TUGMA -->
   <div id="btn1Box" style="display:none; margin-top:15px; background:#fafafa; padding:12px; border-radius:12px; border:1.5px solid #ddd;">
     <label>1-Tugma nomi:</label>
     <input type="text" id="tugmaNomi1" placeholder="Masalan: Buyurtma berish" style="margin-bottom:10px;">
@@ -137,9 +147,10 @@ textarea:focus, input:focus { border-color:#1E88E5; }
     <input type="url" id="havola1" placeholder="https://t.me/...">
   </div>
 
+  <!-- 2-TUGMA -->
   <div id="btn2Box" style="display:none; margin-top:12px; background:#fafafa; padding:12px; border-radius:12px; border:1.5px solid #ddd;">
     <label>2-Tugma nomi:</label>
-    <input type="text" id="tugmaNomi2" placeholder="Masalan: Bog'lanish" style="margin-bottom:10px;">
+    <input type="text" id="tugmaNomi2" placeholder="Masalan: Admin bilan aloqa" style="margin-bottom:10px;">
     <label>2-Tugma manzili (URL):</label>
     <input type="url" id="havola2" placeholder="https://t.me/...">
   </div>
@@ -150,14 +161,14 @@ textarea:focus, input:focus { border-color:#1E88E5; }
   </div>
 </div>
 
-<!-- 4: RANG SO'RASH -->
+<!-- 4: ALOHIDA RANG SO'RASH -->
 <div class="step" id="step4">
   <div class="step-indicator">4 / 4</div>
   <h2>🎨 Tugma ranglari</h2>
 
   <!-- 1-TUGMA UCHUN RANG -->
   <div id="colorBox1" class="color-section-box" style="display:none;">
-    <label>👉 1-Tugma uchun qanday rang tanlaysiz?</label>
+    <label>👉 1-Tugma uchun qanday rang berasiz?</label>
     <div class="colors">
       <div class="color-btn selected" data-rang="kok" onclick="selectRang(this, 1)">🔵<br><small style="color:#fff">Ko'k</small></div>
       <div class="color-btn" data-rang="yashil" onclick="selectRang(this, 1)">🟢<br><small style="color:#fff">Yashil</small></div>
@@ -167,10 +178,10 @@ textarea:focus, input:focus { border-color:#1E88E5; }
 
   <!-- 2-TUGMA UCHUN RANG -->
   <div id="colorBox2" class="color-section-box" style="display:none;">
-    <label>👉 2-Tugma uchun qanday rang tanlaysiz?</label>
+    <label>👉 2-Tugma uchun qanday rang berasiz?</label>
     <div class="colors">
-      <div class="color-btn selected" data-rang="kok" onclick="selectRang(this, 2)">🔵<br><small style="color:#fff">Ko'k</small></div>
-      <div class="color-btn" data-rang="yashil" onclick="selectRang(this, 2)">🟢<br><small style="color:#fff">Yashil</small></div>
+      <div class="color-btn" data-rang="kok" onclick="selectRang(this, 2)">🔵<br><small style="color:#fff">Ko'k</small></div>
+      <div class="color-btn selected" data-rang="yashil" onclick="selectRang(this, 2)">🟢<br><small style="color:#fff">Yashil</small></div>
       <div class="color-btn" data-rang="qizil"  onclick="selectRang(this, 2)">🔴<br><small style="color:#fff">Qizil</small></div>
     </div>
   </div>
@@ -199,10 +210,11 @@ tg.ready();
 let selectedMedia = "none";
 let photoBase64 = null;
 let btnCount = 0;
+let btnLayout = "stacked"; // Yonma-yon yoki tagma-tagligi
 
-// Har bir tugma uchun alohida rang o'zgaruvchilari
-let selectedRang1 = "kok";
-let selectedRang2 = "kok";
+// HAR BIR TUGMA UCHUN ALOHIDA RANG
+let selectedRang1 = "kok";     // 1-tugma boshlang'ich rangi KO'K
+let selectedRang2 = "yashil";  // 2-tugma boshlang'ich rangi YASHIL
 
 const rangColors = { yashil:"#4CAF50", qizil:"#e53935", kok:"#1E88E5" };
 const rangEmoji  = { yashil:"🟢", qizil:"🔴", kok:"🔵" };
@@ -220,15 +232,34 @@ function showStep(n) {
 
 function selectBtnCount(n) {
   btnCount = n;
-  document.querySelectorAll('#step3 .media-type-btn').forEach(b => b.classList.remove('selected'));
-  document.querySelector(`#step3 .media-type-btn[data-count="${n}"]`).classList.add('selected');
+  document.getElementById('bc0').classList.remove('selected');
+  document.getElementById('bc1').classList.remove('selected');
+  document.getElementById('bc2').classList.remove('selected');
+  document.getElementById('bc'+n).classList.add('selected');
+
   document.getElementById('btn1Box').style.display = n >= 1 ? 'block' : 'none';
   document.getElementById('btn2Box').style.display = n === 2 ? 'block' : 'none';
+  document.getElementById('btnLayoutBox').style.display = n === 2 ? 'block' : 'none';
+}
+
+function selectLayout(type) {
+  btnLayout = type;
+  document.getElementById('layout1').classList.remove('selected');
+  document.getElementById('layout1').style.borderColor = "#ddd";
+  document.getElementById('layout2').classList.remove('selected');
+  document.getElementById('layout2').style.borderColor = "#ddd";
+  
+  if(type === 'stacked') {
+    document.getElementById('layout1').classList.add('selected');
+    document.getElementById('layout1').style.borderColor = "#1E88E5";
+  } else {
+    document.getElementById('layout2').classList.add('selected');
+    document.getElementById('layout2').style.borderColor = "#1E88E5";
+  }
 }
 
 function nextStep(f) {
   if(f === 3) {
-    // Tugma manzil va ismini tekshirish
     if(btnCount >= 1) {
       const n1 = document.getElementById('tugmaNomi1').value.trim();
       const h1 = document.getElementById('havola1').value.trim();
@@ -242,12 +273,10 @@ function nextStep(f) {
       if(!h2 || (!h2.startsWith('http') && !h2.startsWith('tg://'))) { alert("2-tugma manzilida xatolik bor!"); return; }
     }
     
-    // Agar tugma tanlanmagan bo'lsa to'g'ridan to'g'ri ko'rish (Preview) ga o'tadi
     if(btnCount === 0) {
       showPreview(); 
       return;
     } else {
-      // 1 yoki 2 ta tugmaga qarab Rang So'rash joylarini ochish
       document.getElementById('colorBox1').style.display = 'block';
       document.getElementById('colorBox2').style.display = (btnCount === 2) ? 'block' : 'none';
     }
@@ -256,7 +285,7 @@ function nextStep(f) {
 }
 
 function prevStep(f) { 
-  if(f === 5 && btnCount === 0) { showStep(3); return; } // Tugmasiz post bo'lsa bitta orqaga
+  if(f === 5 && btnCount === 0) { showStep(3); return; }
   showStep(f-1); 
 }
 
@@ -286,7 +315,7 @@ function previewPhoto(input){
   r.readAsDataURL(file);
 }
 
-// Rang tanlaganda aynan qaysi tugmaga ekanligini ajratish
+// QAYSI TUGMANI RANGI EKANLIGINI FARQLASH UCHUN
 function selectRang(el, tugmaRaqami){
   document.querySelectorAll(`#colorBox${tugmaRaqami} .color-btn`).forEach(b=>b.classList.remove('selected'));
   el.classList.add('selected');
@@ -305,22 +334,27 @@ function showPreview(){
   
   if(matn) html+=`<b>Matn:</b><br>${matn.replace(/\n/g, '<br>')}<br><br>`;
   
-  // 1-TUGMA UCHUN PREVIEW (O'zi tanlagan rang bilan)
-  if(btnCount >= 1) {
+  if(btnCount === 1) {
     const n1 = document.getElementById('tugmaNomi1').value.trim();
-    const h1 = document.getElementById('havola1').value.trim();
-    const color1 = rangColors[selectedRang1];
-    const emoji1 = rangEmoji[selectedRang1];
-    html += `<a href="${h1}" class="preview-btn" style="background:${color1}; display:block; margin-bottom:8px;">${emoji1} ${n1}</a>`;
-  }
-  
-  // 2-TUGMA UCHUN PREVIEW (O'zi tanlagan rang bilan)
-  if(btnCount === 2) {
+    html += `<a class="preview-btn" style="background:${rangColors[selectedRang1]}; margin-top:10px;">${rangEmoji[selectedRang1]} ${n1}</a>`;
+  } 
+  else if(btnCount === 2) {
+    const n1 = document.getElementById('tugmaNomi1').value.trim();
     const n2 = document.getElementById('tugmaNomi2').value.trim();
-    const h2 = document.getElementById('havola2').value.trim();
-    const color2 = rangColors[selectedRang2];
-    const emoji2 = rangEmoji[selectedRang2];
-    html += `<a href="${h2}" class="preview-btn" style="background:${color2}; display:block;">${emoji2} ${n2}</a>`;
+    
+    // Agar YONMA-YON tanlangan bo'lsa
+    if(btnLayout === 'inline') {
+      html += `
+      <div style="display:flex; gap:8px; margin-top:10px;">
+        <a class="preview-btn" style="background:${rangColors[selectedRang1]}; flex:1; margin-top:0;">${rangEmoji[selectedRang1]} ${n1}</a>
+        <a class="preview-btn" style="background:${rangColors[selectedRang2]}; flex:1; margin-top:0;">${rangEmoji[selectedRang2]} ${n2}</a>
+      </div>`;
+    } 
+    // Agar TAGMA-TAG tanlangan bo'lsa
+    else {
+      html += `<a class="preview-btn" style="background:${rangColors[selectedRang1]}; margin-top:10px;">${rangEmoji[selectedRang1]} ${n1}</a>`;
+      html += `<a class="preview-btn" style="background:${rangColors[selectedRang2]}; margin-top:8px;">${rangEmoji[selectedRang2]} ${n2}</a>`;
+    }
   }
   
   if(!html) html='<i>Post bosh</i>';
@@ -341,31 +375,33 @@ function yuborish(){
   let formData = new FormData();
   formData.append("chat_id", CHANNEL_ID);
   
-  // INLINE KLAVIATURA YASASH (Har biriga alohida stil va emoji)
   let keyboardArray =[];
   
-  if(btnCount >= 1) {
+  if(btnCount === 1) {
     const n1 = document.getElementById('tugmaNomi1').value.trim();
     const h1 = document.getElementById('havola1').value.trim();
-    const style1 = styleMap[selectedRang1];
-    const emoji1 = rangEmoji[selectedRang1];
-    // 1-tugmani qo'shish
-    keyboardArray.push([{ text: `${emoji1} ${n1}`, url: h1, style: style1 }]);
-  }
-  
-  if(btnCount === 2) {
+    keyboardArray.push([{ text: `${rangEmoji[selectedRang1]} ${n1}`, url: h1, style: styleMap[selectedRang1] }]);
+  } 
+  else if(btnCount === 2) {
+    const n1 = document.getElementById('tugmaNomi1').value.trim();
+    const h1 = document.getElementById('havola1').value.trim();
     const n2 = document.getElementById('tugmaNomi2').value.trim();
     const h2 = document.getElementById('havola2').value.trim();
-    const style2 = styleMap[selectedRang2];
-    const emoji2 = rangEmoji[selectedRang2];
-    // 2-tugmani qo'shish
-    keyboardArray.push([{ text: `${emoji2} ${n2}`, url: h2, style: style2 }]);
+    
+    const obj1 = { text: `${rangEmoji[selectedRang1]} ${n1}`, url: h1, style: styleMap[selectedRang1] };
+    const obj2 = { text: `${rangEmoji[selectedRang2]} ${n2}`, url: h2, style: styleMap[selectedRang2] };
+
+    // Telegramga API'ga shunga mos xabar tuzamiz
+    if(btnLayout === 'inline') {
+      keyboardArray.push([obj1, obj2]); // Bitta qatorda
+    } else {
+      keyboardArray.push([obj1]); // Ikkita alohida qatorda
+      keyboardArray.push([obj2]);
+    }
   }
 
-  // Agar tugmalar bo'lsa, xatga qo'shib yuboramiz
   if(keyboardArray.length > 0) {
-    const keyboard = { inline_keyboard: keyboardArray };
-    formData.append("reply_markup", JSON.stringify(keyboard));
+    formData.append("reply_markup", JSON.stringify({ inline_keyboard: keyboardArray }));
   }
 
   let apiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/`;
@@ -392,7 +428,6 @@ function yuborish(){
     apiUrl += "sendMessage";
   }
 
-  // API orqali jo'natish
   fetch(apiUrl, { method: "POST", body: formData })
     .then(res => res.json())
     .then(data => {
