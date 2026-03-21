@@ -10,8 +10,12 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 def post_kb():
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton("📝 Post yaratish", web_app=WebAppInfo(url=WEBAPP_URL))]
+    # Tugmaga "primary" (ko'k) rang berish
+    return InlineKeyboardMarkup([[InlineKeyboardButton(
+            "📝       Post yaratish       📝", 
+            web_app=WebAppInfo(url=WEBAPP_URL),
+            api_kwargs={"style": "primary"}
+        )]
     ])
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
