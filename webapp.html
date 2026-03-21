@@ -61,7 +61,7 @@ textarea:focus, input:focus { border-color:#1E88E5; }
 .color-btn[data-rang="qizil"]  { background:#e53935; }
 .color-btn[data-rang="kok"]    { background:#1E88E5; }
 .preview-box { background:#f0f0f0; border-radius:14px; padding:14px; margin-bottom:14px; font-size:14px; line-height:1.7; }
-.preview-btn { display:block; padding:12px 20px; border-radius:12px; color:#fff; font-weight:700; font-size:16px; margin-top:10px; text-align:center; text-decoration: none;}
+.preview-btn { display:block; padding:12px 20px; border-radius:12px; color:#fff; font-weight:700; font-size:16px; text-align:center; text-decoration: none;}
 .preview-media { width:100%; border-radius:10px; margin:8px 0; max-height:180px; object-fit:cover; }
 .sending-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center; flex-direction:column; }
 .sending-overlay.show { display:flex; }
@@ -79,7 +79,7 @@ textarea:focus, input:focus { border-color:#1E88E5; }
 
 <!-- 1: MATN -->
 <div class="step active" id="step1">
-  <div class="step-indicator">1 / 5</div>
+  <div class="step-indicator">1 / 4</div>
   <h2>✏️ Post matni</h2>
   <label>Matn kiriting:</label>
   <textarea id="matn" rows="5" placeholder="Post matni..."></textarea>
@@ -91,7 +91,7 @@ textarea:focus, input:focus { border-color:#1E88E5; }
 
 <!-- 2: MEDIA -->
 <div class="step" id="step2">
-  <div class="step-indicator">2 / 5</div>
+  <div class="step-indicator">2 / 4</div>
   <h2>📎 Media</h2>
   <div class="media-types">
     <div class="media-type-btn selected" data-type="none" onclick="selectMedia(this)">🚫<br><small>Yo'q</small></div>
@@ -110,12 +110,6 @@ textarea:focus, input:focus { border-color:#1E88E5; }
   <div id="videoBox" class="video-link-box" style="display:none">
     <label>Video URL (Telegram yoki boshqa link):</label>
     <input type="url" id="videoUrl" placeholder="https://t.me/...">
-    <div class="info-box">
-      💡 Video yuborish uchun:<br>
-      1. Videoni Telegram ga yuklang<br>
-      2. Video havolasini nusxa oling<br>
-      3. Shu yerga joylashtiring
-    </div>
   </div>
 
   <div class="btn-row" style="margin-top:14px">
@@ -124,35 +118,40 @@ textarea:focus, input:focus { border-color:#1E88E5; }
   </div>
 </div>
 
-<!-- 3: HAVOLA -->
+<!-- 3: TUGMALAR TANLOVI -->
 <div class="step" id="step3">
-  <div class="step-indicator">3 / 5</div>
-  <h2>🔗 Tugma havolasi</h2>
-  <label>URL kiriting:</label>
-  <input type="url" id="havola" placeholder="https://t.me/Azizbekl2026">
-  <div class="btn-row">
+  <div class="step-indicator">3 / 4</div>
+  <h2>🔗 Tugmalar</h2>
+  
+  <div class="media-types">
+    <div class="media-type-btn selected" data-count="0" onclick="selectBtnCount(0)">0️⃣<br><small>Yo'q</small></div>
+    <div class="media-type-btn" data-count="1" onclick="selectBtnCount(1)">1️⃣<br><small>1 ta tugma</small></div>
+    <div class="media-type-btn" data-count="2" onclick="selectBtnCount(2)">2️⃣<br><small>2 ta tugma</small></div>
+  </div>
+
+  <div id="btn1Box" style="display:none; margin-top:15px; background:#fafafa; padding:12px; border-radius:12px; border:1.5px solid #ddd;">
+    <label>1-Tugma nomi:</label>
+    <input type="text" id="tugmaNomi1" placeholder="Masalan: Buyurtma berish" style="margin-bottom:10px;">
+    <label>1-Tugma manzili (URL):</label>
+    <input type="url" id="havola1" placeholder="https://t.me/...">
+  </div>
+
+  <div id="btn2Box" style="display:none; margin-top:12px; background:#fafafa; padding:12px; border-radius:12px; border:1.5px solid #ddd;">
+    <label>2-Tugma nomi:</label>
+    <input type="text" id="tugmaNomi2" placeholder="Masalan: Bog'lanish" style="margin-bottom:10px;">
+    <label>2-Tugma manzili (URL):</label>
+    <input type="url" id="havola2" placeholder="https://t.me/...">
+  </div>
+
+  <div class="btn-row" style="margin-top:14px">
     <button class="btn btn-gray" onclick="prevStep(3)">⬅️ Orqaga</button>
-    <button class="btn btn-gray" onclick="skip('havola')">⏭ O'tkazib</button>
     <button class="btn btn-blue" onclick="nextStep(3)">Keyingi ➡️</button>
   </div>
 </div>
 
-<!-- 4: TUGMA NOMI -->
+<!-- 4: RANG -->
 <div class="step" id="step4">
-  <div class="step-indicator">4 / 5</div>
-  <h2>🔘 Tugma nomi</h2>
-  <label>Tugmada chiqadigan matn:</label>
-  <input type="text" id="tugmaNomi" placeholder="Buyurtma berish">
-  <div class="btn-row">
-    <button class="btn btn-gray" onclick="prevStep(4)">⬅️ Orqaga</button>
-    <button class="btn btn-gray" onclick="skip('tugmaNomi')">⏭ O'tkazib</button>
-    <button class="btn btn-blue" onclick="nextStep(4)">Keyingi ➡️</button>
-  </div>
-</div>
-
-<!-- 5: RANG -->
-<div class="step" id="step5">
-  <div class="step-indicator">5 / 5</div>
+  <div class="step-indicator">4 / 4</div>
   <h2>🎨 Tugma rangi</h2>
   <div class="colors">
     <div class="color-btn" data-rang="yashil" onclick="selectRang(this)">🟢<br><small style="color:#fff">Yashil</small></div>
@@ -160,17 +159,17 @@ textarea:focus, input:focus { border-color:#1E88E5; }
     <div class="color-btn selected" data-rang="kok" onclick="selectRang(this)">🔵<br><small style="color:#fff">Ko'k</small></div>
   </div>
   <div class="btn-row" style="margin-top:16px">
-    <button class="btn btn-gray" onclick="prevStep(5)">⬅️ Orqaga</button>
+    <button class="btn btn-gray" onclick="prevStep(4)">⬅️ Orqaga</button>
     <button class="btn btn-blue" onclick="showPreview()">Ko'rish 👁</button>
   </div>
 </div>
 
-<!-- 6: PREVIEW -->
-<div class="step" id="step6">
+<!-- 5: PREVIEW -->
+<div class="step" id="step5">
   <h2>📋 Post ko'rinishi</h2>
   <div class="preview-box" id="previewBox"></div>
   <div class="btn-row">
-    <button class="btn btn-red"  onclick="prevStep(6)">⬅️ Orqaga</button>
+    <button class="btn btn-red"  onclick="prevStep(5)">⬅️ Orqaga</button>
     <button class="btn btn-blue" id="yuborishBtn" onclick="yuborish()">✅ Kanalga yuborish</button>
   </div>
 </div>
@@ -183,10 +182,11 @@ tg.ready();
 let selectedRang = "kok";
 let selectedMedia = "none";
 let photoBase64 = null;
+let btnCount = 0;
 
 const rangColors = { yashil:"#4CAF50", qizil:"#e53935", kok:"#1E88E5" };
 const rangEmoji  = { yashil:"🟢", qizil:"🔴", kok:"🔵" };
-const styleMap   = { yashil:"success", qizil:"danger", kok:"primary" }; // TELEGRAM API UCHUN RANG KODLARI
+const styleMap   = { yashil:"success", qizil:"danger", kok:"primary" };
 
 // KANAL MA'LUMOTLARI VA BOT TOKENI
 const BOT_TOKEN = "8620251558:AAFtCwV29iHcTR5TfeWmBNCAWSjPl2ZcK6c";
@@ -198,24 +198,47 @@ function showStep(n) {
   window.scrollTo(0,0);
 }
 
+function selectBtnCount(n) {
+  btnCount = n;
+  document.querySelectorAll('#step3 .media-type-btn').forEach(b => b.classList.remove('selected'));
+  document.querySelector(`#step3 .media-type-btn[data-count="${n}"]`).classList.add('selected');
+  document.getElementById('btn1Box').style.display = n >= 1 ? 'block' : 'none';
+  document.getElementById('btn2Box').style.display = n === 2 ? 'block' : 'none';
+}
+
 function nextStep(f) {
-  if(f===3){
-    const h=document.getElementById('havola').value.trim();
-    if(h && !h.startsWith('http')){ alert("Havola https:// yoki http:// bilan boshlanishi kerak!"); return; }
+  if(f === 3) {
+    if(btnCount >= 1) {
+      const n1 = document.getElementById('tugmaNomi1').value.trim();
+      const h1 = document.getElementById('havola1').value.trim();
+      if(!n1) { alert("1-tugma nomini kiriting!"); return; }
+      if(!h1 || (!h1.startsWith('http') && !h1.startsWith('tg://'))) { alert("1-tugma manzilida xatolik bor!"); return; }
+    }
+    if(btnCount === 2) {
+      const n2 = document.getElementById('tugmaNomi2').value.trim();
+      const h2 = document.getElementById('havola2').value.trim();
+      if(!n2) { alert("2-tugma nomini kiriting!"); return; }
+      if(!h2 || (!h2.startsWith('http') && !h2.startsWith('tg://'))) { alert("2-tugma manzilida xatolik bor!"); return; }
+    }
+    if(btnCount === 0) {
+      showPreview(); // Agar tugma bo'lmasa, Rang tanlashni o'tkazib yuboradi
+      return;
+    }
   }
   showStep(f+1);
 }
 
-function prevStep(f){ showStep(f-1); }
+function prevStep(f) { 
+  if(f === 5 && btnCount === 0) { showStep(3); return; }
+  showStep(f-1); 
+}
 
 function skip(field){
   if(field==='matn'){ document.getElementById('matn').value=''; showStep(2); }
-  if(field==='havola'){ document.getElementById('havola').value=''; showStep(4); }
-  if(field==='tugmaNomi'){ document.getElementById('tugmaNomi').value=''; showStep(5); }
 }
 
 function selectMedia(el){
-  document.querySelectorAll('.media-type-btn').forEach(b=>b.classList.remove('selected'));
+  document.querySelectorAll('#step2 .media-type-btn').forEach(b=>b.classList.remove('selected'));
   el.classList.add('selected');
   selectedMedia=el.dataset.type;
   document.getElementById('photoBox').style.display='none';
@@ -244,8 +267,6 @@ function selectRang(el){
 
 function showPreview(){
   const matn=document.getElementById('matn').value.trim();
-  const havola=document.getElementById('havola').value.trim();
-  const tugmaNomi=document.getElementById('tugmaNomi').value.trim();
   const videoUrl=document.getElementById('videoUrl').value.trim();
   const color=rangColors[selectedRang];
   const emoji=rangEmoji[selectedRang];
@@ -254,16 +275,25 @@ function showPreview(){
   if(selectedMedia==='photo'&&photoBase64) html+=`<img src="${photoBase64}" class="preview-media"><br>`;
   else if(selectedMedia==='video_url'&&videoUrl) html+=`<div style="background:#1E88E5;color:#fff;padding:8px 14px;border-radius:10px;margin-bottom:8px">🎬 Video: ${videoUrl.substring(0,40)}...</div>`;
   
-  if(matn) html+=`<b>Matn:</b><br>${matn}<br><br>`;
+  if(matn) html+=`<b>Matn:</b><br>${matn.replace(/\n/g, '<br>')}<br><br>`;
   
-  if(tugmaNomi&&havola) html+=`<a href="${havola}" class="preview-btn" style="background:${color}">${emoji} ${tugmaNomi}</a>`;
-  else if(!html) html='<i>Post bosh</i>';
+  if(btnCount >= 1) {
+    const n1 = document.getElementById('tugmaNomi1').value.trim();
+    const h1 = document.getElementById('havola1').value.trim();
+    html += `<a href="${h1}" class="preview-btn" style="background:${color}; display:block; margin-bottom:8px;">${emoji} ${n1}</a>`;
+  }
+  if(btnCount === 2) {
+    const n2 = document.getElementById('tugmaNomi2').value.trim();
+    const h2 = document.getElementById('havola2').value.trim();
+    html += `<a href="${h2}" class="preview-btn" style="background:${color}; display:block;">${emoji} ${n2}</a>`;
+  }
+  
+  if(!html) html='<i>Post bosh</i>';
   
   document.getElementById('previewBox').innerHTML=html;
-  showStep(6);
+  showStep(5);
 }
 
-// YANGI YUBORISH FUNKSIYASI
 function yuborish(){
   const btn = document.getElementById('yuborishBtn');
   btn.disabled = true;
@@ -271,25 +301,29 @@ function yuborish(){
   document.getElementById('sendingOverlay').classList.add('show');
 
   const matn = document.getElementById('matn').value.trim();
-  const havola = document.getElementById('havola').value.trim();
-  const tugmaNomi = document.getElementById('tugmaNomi').value.trim();
   const videoUrl = document.getElementById('videoUrl').value.trim();
   
   const emoji = rangEmoji[selectedRang] || "🔵";
-  const selectedStyle = styleMap[selectedRang] || "primary"; // TANLANGAN STIL TAYYORLASH
+  const selectedStyle = styleMap[selectedRang] || "primary";
 
   let formData = new FormData();
   formData.append("chat_id", CHANNEL_ID);
   
   // INLINE KLAVIATURA (RANGI BILAN)
-  if(tugmaNomi && havola) {
-    const keyboard = {
-      inline_keyboard: [[{ 
-        text: `${emoji} ${tugmaNomi}`, 
-        url: havola,
-        style: selectedStyle // SHU YERDA TUGMA RANGI TELEGRAMGA KETADI
-      }]]
-    };
+  let keyboardArray =[];
+  if(btnCount >= 1) {
+    const n1 = document.getElementById('tugmaNomi1').value.trim();
+    const h1 = document.getElementById('havola1').value.trim();
+    keyboardArray.push([{ text: `${emoji} ${n1}`, url: h1, style: selectedStyle }]);
+  }
+  if(btnCount === 2) {
+    const n2 = document.getElementById('tugmaNomi2').value.trim();
+    const h2 = document.getElementById('havola2').value.trim();
+    keyboardArray.push([{ text: `${emoji} ${n2}`, url: h2, style: selectedStyle }]);
+  }
+
+  if(keyboardArray.length > 0) {
+    const keyboard = { inline_keyboard: keyboardArray };
     formData.append("reply_markup", JSON.stringify(keyboard));
   }
 
