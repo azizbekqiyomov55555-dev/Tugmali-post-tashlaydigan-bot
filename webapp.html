@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post yuborish</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--tg-theme-bg-color, #fff);
+    color: var(--tg-theme-text-color, #000);
+    padding: 16px;
+    min-height: 100vh;
+  }
+  h2 { font-size: 18px; margin-bottom: 16px; text-align: center; }
+  .step { display: none; }
+  .step.active { display: block; }
+  label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  textarea, input[type=text], input[type=url] {
+    width: 100%; padding: 12px; border-radius: 12px;
+    border: 1.5px solid #ddd; font-size: 15px;
+    background: var(--tg-theme-secondary-bg-color, #f5f5f5);
+    color: var(--tg-theme-text-color, #000);
+    outline: none; resize: none;
+  }
+  textarea:focus, input:focus { border-color: #4CAF50; }
+  .btn-row { display: flex; gap: 10px; margin-top: 16px; }
+  .btn {
+    flex: 1; padding: 14px; border: none; border-radius: 14px;
+    font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s;
+  }
+  .btn-green { background: #4CAF50; color: #fff; }
+  .btn-green:active { background: #388E3C; }
+  .btn-red   { background: #e53935; color: #fff; }
+  .btn-red:active { background: #b71c1c; }
+  .btn-gray  { background: #9E9E9E; color: #fff; }
+
+  /* Rang tanlash */
+  .colors { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 10px; }
+  .color-btn {
+    padding: 16px 8px; border-radius: 14px; border: 3px solid transparent;
+    font-size: 22px; text-align: center; cursor: pointer; transition: 0.15s;
+    background: #f0f0f0;
+  }
+  .color-btn.selected { border-color: #000; transform: scale(1.08); }
+  .color-btn[data-rang="yashil"]    { background: #4CAF50; }
+  .color-btn[data-rang="qizil"]     { background: #e53935; }
+  .color-btn[data-rang="kok"]       { background: #1E88E5; }
+  .color-btn[data-rang="sariq"]     { background: #FDD835; }
+  .color-btn[data-rang="toq_sariq"] { background: #FB8C00; }
+  .color-btn[data-rang="binafsha"]  { background: #8E24AA; color:#fff; }
+  .color-btn[data-rang="qora"]      { background: #212121; color:#fff; }
+  .color-btn[data-rang="oq"]        { background: #fff; border: 2px solid #ccc; }
+  .color-btn[data-rang="jigarrang"] { background: #6D4C41; color:#fff; }
+
+  /* Preview */
+  .preview-box {
+    background: #f0f0f0; border-radius: 14px; padding: 14px;
+    margin-bottom: 14px; font-size: 14px; line-height: 1.6;
+  }
+  .preview-btn {
+    display: inline-block; padding: 10px 20px; border-radius: 10px;
+    color: #fff; font-weight: 700; font-size: 15px; margin-top: 8px;
+  }
+  .step-indicator {
+    text-align: center; font-size: 13px; color: #888; margin-bottom: 12px;
+  }
+  .img-preview { width:100%; border-radius:12px; margin-top:8px; display:none; }
+</style>
+</head>
+<body>
+
+<!-- QADAM 1: MATN -->
+<div class="step active" id="step1">
+  <div class="step-indicator">1 / 5</div>
+  <h2>✏️ Post matni</h2>
+  <label>Matn kiriting:</label>
+  <textarea id="matn" rows="5" placeholder="Post matni..."></textarea>
+  <div class="btn-row">
+    <button class="btn btn-gray" onclick="skip('matn')">⏭ O'tkazib yuborish</button>
+    <button class="btn btn-green" onclick="nextStep(1)">Keyingi ➡️</button>
+  </div>
+</div>
+
+<!-- QADAM 2: RASM -->
+<div class="step" id="step2">
+  <div class="step-indicator">2 / 5</div>
+  <h2>🖼 Rasm</h2>
+  <label>Rasm tanlang:</label>
+  <input type="file" id="rasmFile" accept="image/*" onchange="previewImg(this)">
+  <img id="imgPreview" class="img-preview">
+  <div class="btn-row">
+    <button class="btn btn-gray" onclick="prevStep(2)">⬅️ Orqaga</button>
+    <button class="btn btn-gray" onclick="skip('rasm')">⏭ O'tkazib</button>
+    <button class="btn btn-green" onclick="nextStep(2)">Keyingi ➡️</button>
+  </div>
+</div>
+
+<!-- QADAM 3: HAVOLA -->
+<div class="step" id="step3">
+  <div class="step-indicator">3 / 5</div>
+  <h2>🔗 Havola</h2>
+  <label>Tugma havolasi:</label>
+  <input type="url" id="havola" placeholder="https://t.me/Azizbekl2026">
+  <div class="btn-row">
+    <button class="btn btn-gray" onclick="prevStep(3)">⬅️ Orqaga</button>
+    <button class="btn btn-gray" onclick="skip('havola')">⏭ O'tkazib</button>
+    <button class="btn btn-green" onclick="nextStep(3)">Keyingi ➡️</button>
+  </div>
+</div>
+
+<!-- QADAM 4: TUGMA NOMI -->
+<div class="step" id="step4">
+  <div class="step-indicator">4 / 5</div>
+  <h2>🔘 Tugma nomi</h2>
+  <label>Tugmada chiqadigan matn:</label>
+  <input type="text" id="tugmaNomi" placeholder="Buyurtma berish">
+  <div class="btn-row">
+    <button class="btn btn-gray" onclick="prevStep(4)">⬅️ Orqaga</button>
+    <button class="btn btn-gray" onclick="skip('tugmaNomi')">⏭ O'tkazib</button>
+    <button class="btn btn-green" onclick="nextStep(4)">Keyingi ➡️</button>
+  </div>
+</div>
+
+<!-- QADAM 5: RANG -->
+<div class="step" id="step5">
+  <div class="step-indicator">5 / 5</div>
+  <h2>🎨 Tugma rangi</h2>
+  <div class="colors">
+    <div class="color-btn selected" data-rang="yashil"   onclick="selectRang(this)">🟢<br><small>Yashil</small></div>
+    <div class="color-btn"         data-rang="qizil"     onclick="selectRang(this)">🔴<br><small>Qizil</small></div>
+    <div class="color-btn"         data-rang="kok"       onclick="selectRang(this)">🔵<br><small>Ko'k</small></div>
+    <div class="color-btn"         data-rang="sariq"     onclick="selectRang(this)">🟡<br><small>Sariq</small></div>
+    <div class="color-btn"         data-rang="toq_sariq" onclick="selectRang(this)">🟠<br><small>To'q sariq</small></div>
+    <div class="color-btn"         data-rang="binafsha"  onclick="selectRang(this)">🟣<br><small>Binafsha</small></div>
+    <div class="color-btn"         data-rang="qora"      onclick="selectRang(this)">⚫<br><small>Qora</small></div>
+    <div class="color-btn"         data-rang="oq"        onclick="selectRang(this)">⚪<br><small>Oq</small></div>
+    <div class="color-btn"         data-rang="jigarrang" onclick="selectRang(this)">🟤<br><small>Jigarrang</small></div>
+  </div>
+  <div class="btn-row" style="margin-top:16px">
+    <button class="btn btn-gray"  onclick="prevStep(5)">⬅️ Orqaga</button>
+    <button class="btn btn-green" onclick="showPreview()">Ko'rish 👁</button>
+  </div>
+</div>
+
+<!-- PREVIEW -->
+<div class="step" id="step6">
+  <h2>📋 Post ko'rinishi</h2>
+  <div class="preview-box" id="previewBox"></div>
+  <div class="btn-row">
+    <button class="btn btn-red"   onclick="prevStep(6)">⬅️ Orqaga</button>
+    <button class="btn btn-green" onclick="yuborish()">✅ Kanalga yuborish</button>
+  </div>
+</div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+tg.ready();
+
+let currentStep = 1;
+let selectedRang = "yashil";
+const rangColors = {
+  yashil:"#4CAF50", qizil:"#e53935", kok:"#1E88E5",
+  sariq:"#FDD835",  toq_sariq:"#FB8C00", binafsha:"#8E24AA",
+  qora:"#212121",   oq:"#eeeeee", jigarrang:"#6D4C41"
+};
+const rangEmoji = {
+  yashil:"🟢",qizil:"🔴",kok:"🔵",sariq:"🟡",
+  toq_sariq:"🟠",binafsha:"🟣",qora:"⚫",oq:"⚪",jigarrang:"🟤"
+};
+
+function showStep(n) {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  currentStep = n;
+}
+
+function nextStep(from) {
+  if (from === 3) {
+    const h = document.getElementById('havola').value.trim();
+    if (h && !h.startsWith('http')) {
+      alert("Havola https:// bilan boshlanishi kerak!");
+      return;
+    }
+  }
+  showStep(from + 1);
+}
+
+function prevStep(from) { showStep(from - 1); }
+
+function skip(field) {
+  if (field === 'matn')     { document.getElementById('matn').value = ''; showStep(2); }
+  if (field === 'rasm')     { showStep(3); }
+  if (field === 'havola')   { document.getElementById('havola').value = ''; showStep(4); }
+  if (field === 'tugmaNomi'){ document.getElementById('tugmaNomi').value = ''; showStep(5); }
+}
+
+function selectRang(el) {
+  document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedRang = el.dataset.rang;
+}
+
+function previewImg(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = document.getElementById('imgPreview');
+    img.src = e.target.result;
+    img.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function showPreview() {
+  const matn     = document.getElementById('matn').value.trim();
+  const havola   = document.getElementById('havola').value.trim();
+  const tugmaNomi= document.getElementById('tugmaNomi').value.trim();
+  const color    = rangColors[selectedRang] || '#4CAF50';
+  const emoji    = rangEmoji[selectedRang]  || '🟢';
+
+  let html = '';
+  if (matn)     html += `<b>Matn:</b><br>${matn}<br><br>`;
+  if (havola)   html += `<b>Havola:</b> ${havola}<br>`;
+  if (tugmaNomi && havola) {
+    html += `<br><span class="preview-btn" style="background:${color}">${emoji} ${tugmaNomi}</span>`;
+  }
+  if (!html) html = '<i>Post bo\'sh</i>';
+
+  document.getElementById('previewBox').innerHTML = html;
+  showStep(6);
+}
+
+function yuborish() {
+  const matn      = document.getElementById('matn').value.trim();
+  const havola    = document.getElementById('havola').value.trim();
+  const tugmaNomi = document.getElementById('tugmaNomi').value.trim();
+
+  const data = {
+    matn, havola,
+    tugma_nomi: tugmaNomi,
+    rang: selectedRang,
+  };
+
+  tg.sendData(JSON.stringify(data));
+}
+</script>
+</body>
+</html>
